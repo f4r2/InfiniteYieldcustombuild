@@ -4297,7 +4297,6 @@ CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot', DESC = 'Takes a screenshot'}
 CMDs[#CMDs + 1] = {NAME = 'togglefullscreen / togglefs', DESC = 'Toggles fullscreen'}
 CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
 CMDs[#CMDs + 1] = {NAME = 'lastcommand / lastcmd', DESC = 'Executes the previous command used'}
-CMDs[#CMDs + 1] = {NAME = 'lastserver / lasts', DESC = 'Join the previous server you were in'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'noclip', DESC = 'Go through objects'}
@@ -4351,6 +4350,8 @@ CMDs[#CMDs + 1] = {NAME = 'offset [X Y Z]', DESC = 'Offsets you by certain coord
 CMDs[#CMDs + 1] = {NAME = 'tweenoffset / toffset [X Y Z]', DESC = 'Tween offset (bypasses some anti cheats)'}
 CMDs[#CMDs + 1] = {NAME = 'notifyposition / notifypos [plr]', DESC = 'Notifies you the coordinates of a character'}
 CMDs[#CMDs + 1] = {NAME = 'copyposition / copypos [plr]', DESC = 'Copies the coordinates of a character to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copyfullposition / copyfullpos [plr]', DESC = 'Copies the coordinates of a character to your clipboard'}
+CMDs[#CMDs + 1] = {NAME = 'copycframe / copycfr [plr]', DESC = 'Copies the CFrame of a character to your clipboard'}
 CMDs[#CMDs + 1] = {NAME = 'walktoposition / walktopos [X Y Z]', DESC = 'Makes you walk to a coordinate'}
 CMDs[#CMDs + 1] = {NAME = 'spawnpoint / spawn [delay]', DESC = 'Sets a position where you will spawn'}
 CMDs[#CMDs + 1] = {NAME = 'nospawnpoint / nospawn', DESC = 'Removes your custom spawn point'}
@@ -7706,17 +7707,6 @@ addcmd('lastcommand',{'lastcmd'},function(args, speaker)
 		execCmd(cmdHistory[1])
 	end
 end)
-addcmd('lastserver',{'lasts'},function(args, speaker)
-	local File = pcall(function()
-		lastServer = game:GetService('HttpService'):JSONDecode(readfile("lastsrvlastscommand.json"))
-	end)
-	if File then
-		game:GetService("TeleportService"):TeleportToPlaceInstance(lastServer.PlaceId, lastServer.JobId, game.Players.LocalPlayer)
-	else
-		notify("Last server could not be found.")
-	end
-end)
-
 
 addcmd('esp',{},function(args, speaker)
 	if not CHMSenabled then
@@ -9835,6 +9825,38 @@ addcmd('copyposition',{'copypos'},function(args, speaker)
 		end
 		local roundedPos = math.round(pos.X) .. ", " .. math.round(pos.Y) .. ", " .. math.round(pos.Z)
 		toClipboard(roundedPos)
+	end
+end)
+
+addcmd('copyfullposition',{'copyfullpos'},function(args, speaker)
+	if not args[1]then
+		if not speaker.Character then return end
+		
+		local ps=speaker.Character:FindFirstChildOfClass'Humanoid'.RootPart.Position
+		toClipboard(('Vector3.new(%s, %s, %s)'):format(tostring(math.round(ps.X)),tostring(math.round(ps.Y)),tostring(math.round(ps.Z))))
+	else
+		if not #getPlayer(args[1],speaker)==0 then return end
+		local pl=Players[getPlayer(args[1],speaker)[1]]
+		if not pl.Character then return end
+		
+		local ps=pl.Character:FindFirstChildOfClass'Humanoid'.RootPart.Position
+		toClipboard(('Vector3.new(%s, %s, %s)'):format(tostring(math.round(ps.X)),tostring(math.round(ps.Y)),tostring(math.round(ps.Z))))
+	end
+end)
+
+addcmd('copycframe',{'copycfr'},function(args, speaker)
+	if not args[1]then
+		if not speaker.Character then return end
+		
+		local cf=speaker.Character:FindFirstChildOfClass'Humanoid'.RootPart.CFrame
+		toClipboard('CFrame.new('..tostring(cf)..')')
+	else
+		if not #getPlayer(args[1],speaker)==0 then return end
+		local pl=Players[getPlayer(args[1],speaker)[1]]
+		if not pl.Character then return end
+		
+		local cf=pl.Character:FindFirstChildOfClass'Humanoid'.RootPart.CFrame
+		toClipboard('CFrame.new('..tostring(cf)..')')
 	end
 end)
 
@@ -12385,15 +12407,6 @@ end)
 
 task.spawn(function()
 	wait()
-	game:GetService("Players").PlayerRemoving:Connect(function(plr)
-		if plr == game.Players.LocalPlayer then
-			local currentServer = {
-				PlaceId = game.PlaceId,
-				JobId = game.JobId
-			}
-			writefile("lastsrvlastscommand.json", game:GetService('HttpService'):JSONEncode(currentServer))
-		end
-	end)
 	Credits:TweenPosition(UDim2.new(0, 0, 0.9, 0), "Out", "Quart", 0.2)
 	Logo:TweenSizeAndPosition(UDim2.new(0, 175, 0, 175), UDim2.new(0, 37, 0, 45), "Out", "Quart", 0.3)
 	wait(1)
