@@ -17,27 +17,6 @@ function DoTween(instance,value)
     tween:Play()
 end
 
-if isfile("CustomIY_confgs.iy") then
-    local success,response = pcall(function()
-        local data = game:GetService("HttpService"):JSONDecode(readfile("CustomIY_confgs.iy"))
-        PlaceFont(data.FontFamily)
-        DoTween(Holder,data.Transparency)
-        DoTween(Dark,data.Transparency)
-        DoTween(Title,data.Transparency)
-        Holder.BorderMode = Enum.BorderMode.Outline
-        Holder.BorderSizePixel = data.BorderSize
-        Holder.BorderColor3 = Color3.new(data.BorderColor[1],data.BorderColor[2],data.BorderColor[3])
-        for i,v in pairs(Holder.Parent:GetDescendants()) do
-            pcall(function()
-                v.TextScaled = data.textIsScaled
-            end)
-        end
-    end)
-    if not success then
-        notify("JSON Load Error:", response)
-    end
-end
-
 if IY_LOADED and not _G.IY_DEBUG == true then
 	-- error("Infinite Yield is already running!",0)
 	return
@@ -6861,6 +6840,27 @@ addcmd('joinplayerdesc',{'joinpdesc'},function(args, speaker)
 	end
 	ToServer(args[1],args[2])
 end)
+
+if isfile("CustomIY_confgs.iy") then
+    local success,response = pcall(function()
+        local data = game:GetService("HttpService"):JSONDecode(readfile("CustomIY_confgs.iy"))
+        PlaceFont(data.FontFamily)
+        DoTween(Holder,data.Transparency)
+        DoTween(Dark,data.Transparency)
+        DoTween(Title,data.Transparency)
+        Holder.BorderMode = Enum.BorderMode.Outline
+        Holder.BorderSizePixel = data.BorderSize
+        Holder.BorderColor3 = Color3.new(data.BorderColor[1],data.BorderColor[2],data.BorderColor[3])
+        for i,v in pairs(Holder.Parent:GetDescendants()) do
+            pcall(function()
+                v.TextScaled = data.textIsScaled
+            end)
+        end
+    end)
+    if not success then
+        notify("JSON Load Error:", response)
+    end
+end
 
 addcmd('setBgTransparency', {}, function(args, speaker)
     local num = tonumber(args[1])
