@@ -4316,6 +4316,7 @@ CMDs[#CMDs + 1] = {NAME = 'screenshot / scrnshot', DESC = 'Takes a screenshot'}
 CMDs[#CMDs + 1] = {NAME = 'togglefullscreen / togglefs', DESC = 'Toggles fullscreen'}
 CMDs[#CMDs + 1] = {NAME = 'notify [text]', DESC = 'Sends you a notification with the provided text'}
 CMDs[#CMDs + 1] = {NAME = 'lastcommand / lastcmd', DESC = 'Executes the previous command used'}
+CMDs[#CMDs + 1] = {NAME = 'lastserver / lasts', DESC = 'Join the previous server you were in'}
 CMDs[#CMDs + 1] = {NAME = 'exit', DESC = 'Kills roblox process'}
 CMDs[#CMDs + 1] = {NAME = '', DESC = ''}
 CMDs[#CMDs + 1] = {NAME = 'noclip', DESC = 'Go through objects'}
@@ -7840,6 +7841,17 @@ end)
 addcmd('lastcommand',{'lastcmd'},function(args, speaker)
 	if cmdHistory[1]:sub(1,11) ~= 'lastcommand' and cmdHistory[1]:sub(1,7) ~= 'lastcmd' then
 		execCmd(cmdHistory[1])
+	end
+end)
+
+addcmd('lastserver',{'lasts'},function(args, speaker)
+	local File = pcall(function()
+		lastServer = game:GetService('HttpService'):JSONDecode(readfile("lastsrvlastscommand.json"))
+	end)
+	if File then
+		game:GetService("TeleportService"):TeleportToPlaceInstance(lastServer.PlaceId, lastServer.JobId, game.Players.LocalPlayer)
+	else
+		notify("Last server could not be found.")
 	end
 end)
 
