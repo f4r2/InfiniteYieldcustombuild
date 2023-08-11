@@ -4668,6 +4668,9 @@ CMDs[#CMDs + 1] = {NAME = 'setBorder [num/default]', DESC = 'Sets border of UI'}
 CMDs[#CMDs + 1] = {NAME = 'setBorderColor ([R] [G] [B] / default)', DESC = 'Sets color of UI border'}
 CMDs[#CMDs + 1] = {NAME = 'textScaled [bool]', DESC = 'Toggle TextScaled of all labels'}
 CMDs[#CMDs + 1] = {NAME = 'saveCustomSettings', DESC = 'Save current CustomIY settings'}
+CMDs[#CMDs + 1] = {NAME = 'Customization', DESC = ''} --hyuvuvuyvbuyvyu
+CMDs[#CMDs + 1] = {NAME = 'tdsrecorder / tdsrec [stratname]', DESC = 'Records tds autostrat using money maker script'}
+
 
 wait()
 
@@ -6952,6 +6955,15 @@ end)
 
 addcmd('exit',{},function(args, speaker)
 	game:shutdown() 
+end)
+
+addcmd('tdsrec',{'tdsrecorder'},function(args)
+	getgenv().StratName = args[1]
+    getgenv().APIVar = "TDS"
+    getgenv().LoggerWindow = false
+    getgenv().Webhook = "WEBHOOK (OPTIONAL)"
+
+loadstring(game:HttpGet("https://mmdevelopment.xyz/Scripts/TDSRecorder"))()
 end)
 
 local Noclipping = nil
